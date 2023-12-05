@@ -228,16 +228,27 @@ Overall_metrics.append(final_metrics)
 
 import numpy as np
 final_result = pd.DataFrame(final_metrics)
-final_result[4] = np.log(final_result[4])
+#final_result[4] = np.log(final_result[4])
+#"For the reference data .csv file in the results folder, the theil_index is not log-processed. (e.g., Titanic\Results\GBC\6-titanic-best-working-classifier.csv) You can remove the previous comment to perform log processing."
 final_result = final_result.transpose()
-final_result.loc[0] = f1  # add f1 and acc to df
-acc = pd.DataFrame(accuracy).transpose()
-acc = acc.rename(index={0: 'accuracy'})
-f1 = pd.DataFrame(f1).transpose()
-f1 = f1.rename(index={0: 'f1'})
-final_result = pd.concat([acc,f1,final_result])
-final_result = final_result.rename(index={0: 'statistical_parity_difference', 1: 'equal_opportunity_difference', 2: 'average_abs_odds_difference', 3: 'disparate_impact', 4: 'theil_index'})
-final_result
+final_result = final_result.rename(index={
+    0: 'statistical_parity_difference', 
+    1: 'equal_opportunity_difference', 
+    2: 'average_abs_odds_difference', 
+    3: 'disparate_impact', 
+    4: 'theil_index'
+})
+acc_df = pd.DataFrame(accuracy).transpose()
+f1_df = pd.DataFrame(f1).transpose()
+
+# 重命名索引以反映数据的含义
+acc_df = acc_df.rename(index={0: 'accuracy'})
+f1_df = f1_df.rename(index={0: 'f1'})
+
+# 先将准确度和F1分数的DataFrame合并，然后再与final_result合并
+result_with_acc_f1 = pd.concat([acc_df, f1_df])
+final_result = pd.concat([result_with_acc_f1, final_result])
+
 print(final_result[0])
 
 
